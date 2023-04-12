@@ -42,24 +42,66 @@
 				<input type="text" name="txtbox2" value="">
 				<input type="file" name="fileUpload">
 		        <input type="Submit" name="SubmitTask14action" value="Upload File">
+		        	
 	        </form>	
 	  
 	  <cfparam name="form.fileUpload" default="">
-
+      
 		<cfif len(trim(form.fileUpload))>
 			<cftry>
-		  <cffile action="upload"
+		  <cffile action="upload"   
 		     fileField="fileUpload"
 		     destination="C:\Pictures"
 		     accept="image/png,image/jpg,image/gif,image/jpeg"
-		     nameconflict="MAKEUNIQUE">
+		     nameconflict="overwrite"
+		     >
+		     <cfif cffile.filesize gt 1000000>
+		     	<cffile action="delete"	file="#cffile.ServerDirectory#\#cffile.ClientFileName#.#cffile.ClientFileExt#" result="fileUpload">
+				<cfthrow type="sizeerror"
+				message="File is to big; your file must be smaller than 1.0mb.">
+				
+			</cfif>
 		     
-		  <p>Thankyou, your file has been uploaded.</p>
+		   <cfoutput>
+		   	Thankyou, your file has been uploaded to  
+            successfully to #cffile.ServerDirectory#\#cffile.ClientFileName##cffile.ClientFileExt# 
+		   </cfoutput>  
+		   <cfif IsImageFile("#cffile.ServerDirectory#/#cffile.ClientFileName#.#cffile.ClientFileExt#")>
+		      <cfimage action="read" source="#cffile.ServerDirectory#/#cffile.ClientFileName#.#cffile.ClientFileExt#" name="myImage">
+		      <cfset ImageScaleToFit(myImage,75,75,"bilinear")>
+		      <cfset newImageName = #cffile.ServerDirectory# & "/" &#cffile.ClientFileName# & "_thumbnail." &#cffile.ClientFileExt#>
+		      <cfset newImageName1 = #cffile.ServerDirectory#&"\"&#cffile.ClientFileName#&"_thumbnail."&#cffile.ClientFileExt#>
+		      <cfimage source="#myImage#" action="write" destination="#newImageName#" overwrite="yes">
+		      <cfoutput >
+		      	
+		      
+		      <p>
+Thank you for uploading the image. We have created a thumbnail for
+your picture.
+</p>
+<p>
+<!--- Display the thumbnail image. --->
+#newImageName1#
+<img src="#getFileFromPath(newImageName1)#">
+</p>
+</cfoutput>
+		      	
+			  <p>saved</p>
+			
+		    </cfif>
+		   	
+		 
 		  <cfcatch type="any">
              Error: <cfoutput>#cfcatch.message#</cfoutput>
           </cfcatch>
           </cftry><br>
 		</cfif>	
+		
+			
+	
+		
+		
+	   
 	
 	       	
 <!--End-->
