@@ -1,13 +1,14 @@
 
-	<cfparam name="form.fileUpload" default="">      
-		<cfif len(trim(form.fileUpload))>
-			<cftry>
-		    	<cffile action="upload" fileField="fileUpload" destination="C:\Pictures" accept="image/png,image/jpg,image/gif,image/jpeg"  nameconflict="overwrite">
-		        <cffile action = "rename"destination = "#cffile.ServerDirectory#/#form.txtbox1#.#cffile.ClientFileExt#" source = "#cffile.ServerDirectory#/#cffile.ClientFileName#.#cffile.ClientFileExt#" mode = "666">
-		        <cfif cffile.filesize gt 1000000>
-		     		<cffile action="delete"	file="#cffile.ServerDirectory#\#form.txtbox1#.#cffile.ClientFileExt#" result="fileUpload">
+<cfparam name="form.fileUpload" default="">      
+<cfif len(trim(form.fileUpload))>
+	<cftry>
+	<cffile action="upload" fileField="fileUpload" destination="C:\Pictures" accept="image/png,image/jpg,image/gif,image/jpeg"  nameconflict="overwrite">
+	<cfdump var="#cffile#"/>
+	<cffile action = "rename"destination = "#cffile.ServerDirectory#/#form.txtbox1#.#cffile.ClientFileExt#" source = "#cffile.ServerDirectory#/#cffile.ClientFileName#.#cffile.ClientFileExt#" mode = "666">
+			<cfif cffile.filesize gt 1000000>
+		    	<cffile action="delete"	file="#cffile.ServerDirectory#\#form.txtbox1#.#cffile.ClientFileExt#" result="fileUpload">
 					<cfthrow type="sizeerror" message="File is to big; your file must be smaller than 1.0mb.">				
-			    </cfif>		     
+			 </cfif>		     
 		    	<cfoutput>
 		   		 Thankyou, your file has been uploaded to successfully to #cffile.ServerDirectory# 
 		    	</cfoutput>
